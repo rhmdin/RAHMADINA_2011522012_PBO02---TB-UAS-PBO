@@ -1,9 +1,4 @@
-import java.util.InputMismatchException;
 import java.util.Scanner;
-import java.util.InputMismatchException;
-import com.mysql.cj.protocol.Resultset;
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.sql.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter; 
@@ -111,8 +106,7 @@ public class Penjualan extends App implements Bbm{
                 belipx = 0;
                 sql = "INSERT INTO penjualan_bbm (No, Tanggal, Admin, Kuantitas_Premium, Kuantitas_Pertalite, Kuantitas_Pertamax, Total_Harga) VALUES ('"+noFaktur(iharga)+"','"+tanggal(iharga)+"','"+admin(iadm)+"','"+belipm+"','"+belipt+"','"+belipx+"','"+harga(iharga)+"')";                   
                 statement.executeUpdate(sql);     
-                System.out.println("Data dengan nomor faktur "+no+" berhasil ditambahkan!");
-            
+                System.out.println("Data dengan nomor faktur "+no+" berhasil ditambahkan!");            
             }
             else if(jenis==2){
                 belipt = jualPertalite(iharga);    
@@ -243,10 +237,11 @@ public class Penjualan extends App implements Bbm{
             con = DriverManager.getConnection(url,"root","");
             String sql;
             System.out.println("1. Hapus nomor tertentu\n2. Hapus semua");
+            System.out.print("Kategori Hapus: ");
             no = i.nextInt();
             if(no==1)
             {
-                System.out.print("\nNo yang akan dihapus : ");
+                System.out.print("\nNomor faktur yang akan dihapus : ");
 	            no = i.nextInt();
                 sql = "DELETE FROM penjualan_bbm WHERE No = "+ no;
                 Statement statement = con.createStatement();
@@ -268,9 +263,30 @@ public class Penjualan extends App implements Bbm{
     }
 
     public void cariPenjualan(String iadm) throws SQLException{
-        //exception
         try {
-            System.out.print("Masukkan nomor faktur yang dicari: ");
+            System.out.println("---CARI DATA PENJUALAN---");
+            System.out.println("1. Nomor faktur\n2.Nama admin");
+            System.out.print("Berdasarkan: ");
+            int ic = Integer.parseInt(i.nextLine());
+            if(ic==1){
+                searchNo(iadm);
+            }
+            else if(ic==2){
+                searchAdmin(iadm);
+            }
+            else{
+                System.out.println("Data hanya dapat dicari berdasarkan nomor faktur atau nama admin!");
+            }
+            
+        } catch (SQLException e) {
+            System.err.println("Terjadi kesalahan dalam mencari data");
+            System.err.println(e.getMessage());
+        }
+    }
+
+    public void searchNo(String iadm) throws SQLException{
+        try {
+            System.out.print("\nMasukkan nomor faktur yang dicari: ");
             no = i.nextInt();
             url = "jdbc:mysql://localhost:3306/SPBU";
             String sql = "SELECT * FROM penjualan_bbm WHERE No LIKE '%"+no+"%'";
@@ -326,6 +342,65 @@ public class Penjualan extends App implements Bbm{
             System.err.println("Terjadi kesalahan dalam mencari data");
             System.err.println(e.getMessage());
         }
+    }
 
+    public void searchAdmin(String iadm) throws SQLException{
+        try {
+            System.out.print("\nMasukkan nama admin yang dicari: ");
+            String inm = i.nextLine();
+            url = "jdbc:mysql://localhost:3306/SPBU";
+            String sql = "SELECT * FROM penjualan_bbm WHERE Admin LIKE '%"+inm+"%'";
+            con = DriverManager.getConnection(url,"root","");
+            Statement statement = con.createStatement();
+            ResultSet result = statement.executeQuery(sql);
+            while (result.next()){
+                System.out.print("\nNo Faktur  : ");
+                System.out.print(result.getInt("No"));
+                System.out.print("\nAdmin      : ");                    
+                System.out.print(result.getString("Admin"));
+                System.out.print("\nTanggal    : ");
+                System.out.print(result.getString("Tanggal"));
+                System.out.print("\nJenis      : ");
+                if(result.getDouble("Kuantitas_Premium")!=0)
+                {
+                    System.out.print("Premium");
+                
+                }
+                else if(result.getDouble("Kuantitas_Pertalite")!=0)
+                {
+                    System.out.print("Pertalite");
+                
+                }
+                else if(result.getDouble("Kuantitas_Pertamax")!=0)
+                {
+                    System.out.print("Pertamax");
+                
+                }
+                System.out.print("\nJumlah     : ");
+                if(result.getDouble("Kuantitas_Premium")!=0)
+                {
+                    System.out.print(result.getDouble("Kuantitas_Premium")+" Liter");
+                
+                }
+                else if(result.getDouble("Kuantitas_Pertalite")!=0)
+                {
+                    System.out.print(result.getDouble("Kuantitas_Pertalite")+" Liter");
+                
+                }
+                else if(result.getDouble("Kuantitas_Pertamax")!=0)
+                {
+                    System.out.print(result.getDouble("Kuantitas_Pertamax")+" Liter");
+                
+                }
+                System.out.print("\nHarga      : ");                    
+                System.out.print(result.getInt("Total_Harga"));
+                System.out.println("");
+                }
+            statement.close();        
+        } 
+        catch (SQLException e) {
+            System.err.println("Terjadi kesalahan dalam mencari data");
+            System.err.println(e.getMessage());
+        }
     }
 }
