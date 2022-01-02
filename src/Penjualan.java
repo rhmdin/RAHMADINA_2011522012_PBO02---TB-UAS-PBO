@@ -8,17 +8,22 @@ import java.sql.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter; 
 
+//inheritance
 public class Penjualan extends App implements Bbm{
 
     static Connection con;
     Scanner i = new Scanner(System.in);
+    //method date
     LocalDateTime myDateObj = LocalDateTime.now();
     DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
     
-    double beli, belipm, belipt, belipx;
+    float beli;
+    float belipm=0;
+    float belipt=0;
+    float belipx=0;
 
     int harga, no, ino;
-    String admin,tgl,url;
+    String admin,tgl,url,sql;
     
     //contructor class Penjualan
     public Penjualan(){
@@ -54,6 +59,7 @@ public class Penjualan extends App implements Bbm{
     }
 
     public String admin(String iadm){
+        //method string
         admin = iadm.toUpperCase();
         return admin;
     }
@@ -64,128 +70,146 @@ public class Penjualan extends App implements Bbm{
     }
 
     public String tanggal(int iharga){
+        //method date;
         tgl = myDateObj.format(myFormatObj);
         return tgl;
     }
 
     //premium = 6500/L
-    public double jualPremium(int iharga){
-        beli = (iharga/6500)+(iharga%6500);
+    public float jualPremium(int iharga){
+        beli = ((float) iharga/6500);
         return beli;
     }
     //pertalit = 8000/L
-    public double jualPertalite(int iharga){
-        beli = (iharga/8000);
+    public float jualPertalite(int iharga){
+        beli = ((float) iharga/8000);
         return beli;
     }
     //pertamax = 10000/L
-    public double jualPertamax(int iharga){
-        beli = (iharga/10000);
+    public float jualPertamax(int iharga){
+        beli = ((float) iharga/10000);
         return beli;
     }
 
  
+    //insert or create data
     public void tambahPenjualan(String iadm) throws SQLException{
+        //exception
         try {
-            Clean.clearScreen();
-            System.out.print("\nTAMBAH DATA TRANSAKSI PENJUALAN BBM");
-            System.out.print("\nHarga : ");
-            int iharga = i.nextInt();
+            url = "jdbc:mysql://localhost:3306/SPBU";
+            con = DriverManager.getConnection(url,"root","");
+            Statement statement = con.createStatement();
+            System.out.print("\n---TAMBAH DATA PENJUALAN BBM---");
             System.out.println("\n1. Premium\n2. Pertalite\n3. Pertamax");
             System.out.print("Jenis: ");
             int jenis = i.nextInt();
+            System.out.print("Harga : ");
+            int iharga = i.nextInt();
             if(jenis==1){
-                beli = jualPremium(iharga)/1000;
-                belipm = jualPremium(iharga);;
+                belipm = jualPremium(iharga);
+                belipt = 0;
+                belipx = 0;
+                sql = "INSERT INTO penjualan_bbm (No, Tanggal, Admin, Kuantitas_Premium, Kuantitas_Pertalite, Kuantitas_Pertamax, Total_Harga) VALUES ('"+noFaktur(iharga)+"','"+tanggal(iharga)+"','"+admin(iadm)+"','"+belipm+"','"+belipt+"','"+belipx+"','"+harga(iharga)+"')";                   
+                statement.executeUpdate(sql);     
+                System.out.println("Data dengan nomor faktur "+no+" berhasil ditambahkan!");
+            
             }
             else if(jenis==2){
-                beli = jualPertalite(iharga);
-                belipt = jualPertalite(iharga);        
+                belipt = jualPertalite(iharga);    
+                belipm = 0;
+                belipx = 0;
+                sql = "INSERT INTO penjualan_bbm (No, Tanggal, Admin, Kuantitas_Premium, Kuantitas_Pertalite, Kuantitas_Pertamax, Total_Harga) VALUES ('"+noFaktur(iharga)+"','"+tanggal(iharga)+"','"+admin(iadm)+"','"+belipm+"','"+belipt+"','"+belipx+"','"+harga(iharga)+"')";                   
+                statement.executeUpdate(sql);     
+                System.out.println("Data dengan nomor faktur "+no+" berhasil ditambahkan!");        
             }   
             else if(jenis==3)
             {
-                beli = jualPertamax(iharga);
                 belipx = jualPertamax(iharga);
-           }
+                belipm = 0;
+                belipt = 0;
+                sql = "INSERT INTO penjualan_bbm (No, Tanggal, Admin, Kuantitas_Premium, Kuantitas_Pertalite, Kuantitas_Pertamax, Total_Harga) VALUES ('"+noFaktur(iharga)+"','"+tanggal(iharga)+"','"+admin(iadm)+"','"+belipm+"','"+belipt+"','"+belipx+"','"+harga(iharga)+"')";                   
+                statement.executeUpdate(sql);     
+                System.out.println("Data dengan nomor faktur "+no+" berhasil ditambahkan!");
+            
+            }
             else{
                 System.out.println("Jenis BBM tidak tersedia");
             }
-            
-            url = "jdbc:mysql://localhost:3306/SPBU";
-            con = DriverManager.getConnection(url,"root","");
-            Statement statement = con.createStatement();
-            String sql = "INSERT INTO penjualan_bbm (No, Tanggal, Admin, Kuantitas_Premium, Kuantitas_Pertalite, Kuantitas_Pertamax, Total_Harga) VALUES ('"+noFaktur(iharga)+"','"+tanggal(iharga)+"','"+admin(iadm)+"','"+belipm+"','"+belipt+"','"+belipx+"','"+harga(iharga)+"')";                   
-            statement.executeUpdate(sql);     
-            System.out.println("Bismillah yeyy Alhamdulillah");
         }
-
         catch (SQLException e) {
-            System.out.println("Coba cek lagi yaa din semangat!");
+            System.out.println("Data gagal ditambahkan!");
             System.err.println(e.getMessage());
 	    }
-        
     }
 
     public void riwayatPenjualan(String iadm) throws SQLException{
+        //exception
         try{
-            Clean.clearScreen();
             url = "jdbc:mysql://localhost:3306/SPBU";
-            
             con = DriverManager.getConnection(url,"root","");
-            String sql ="SELECT * FROM penjualan_bbm";
-            Statement statement = con.createStatement();
-            ResultSet result = statement.executeQuery(sql);
-            System.out.println("\n\n---RIWAYAT TRANSAKSI PENJUALAN---");
-            while (result.next()){
-                System.out.print("\nNo Faktur  : ");
-                System.out.print(result.getInt("No"));
-                System.out.print("\nAdmin      : ");                    
-                System.out.print(result.getString("Admin"));
-                System.out.print("\nTanggal    : ");
-                System.out.print(result.getString("Tanggal"));
-                System.out.print("\nJenis      : ");
-                if(result.getInt("Kuantitas_Premium")!=0)
-                {
-                    System.out.print("Premium");
-                
+            String sqlc ="SELECT COUNT(*) AS total FROM penjualan_bbm";
+            Statement statementc = con.createStatement();
+            ResultSet resultc = statementc.executeQuery(sqlc);
+            
+            if(resultc.next()){
+                int jml = resultc.getInt("total");
+                if(jml>0){
+                    String sql ="SELECT * FROM penjualan_bbm";
+                    Statement statement = con.createStatement();
+                    ResultSet result = statement.executeQuery(sql);
+                    System.out.println("\n\n---RIWAYAT TRANSAKSI PENJUALAN---");
+                    while (result.next()){
+                        System.out.print("\nNo Faktur  : ");
+                        System.out.print(result.getInt("No"));
+                        System.out.print("\nAdmin      : ");                    
+                        System.out.print(result.getString("Admin"));
+                        System.out.print("\nTanggal    : ");
+                        System.out.print(result.getString("Tanggal"));
+                        System.out.print("\nJenis      : ");
+                        if(result.getDouble("Kuantitas_Premium")!=0)
+                        {
+                            System.out.print("Premium");
+                        }
+                        else if(result.getDouble("Kuantitas_Pertalite")!=0)
+                        {
+                            System.out.print("Pertalite");
+                        }
+                        else if(result.getDouble("Kuantitas_Pertamax")!=0)
+                        {
+                            System.out.print("Pertamax");
+                        }
+                        System.out.print("\nJumlah     : ");
+                        if(result.getDouble("Kuantitas_Premium")!=0)
+                        {
+                            System.out.print(result.getDouble("Kuantitas_Premium")+" Liter");
+                        }
+                        else if(result.getDouble("Kuantitas_Pertalite")!=0)
+                        {
+                            System.out.print(result.getDouble("Kuantitas_Pertalite")+" Liter");
+                        
+                        }
+                        else if(result.getDouble("Kuantitas_Pertamax")!=0)
+                        {
+                            System.out.print(result.getDouble("Kuantitas_Pertamax")+" Liter");
+                        }
+                        System.out.print("\nHarga      : ");                    
+                        System.out.print(result.getDouble("Total_Harga"));
+                        System.out.println("\n");
+                        }
                 }
-                else if(result.getInt("Kuantitas_Pertalite")!=0)
-                {
-                    System.out.print("Pertalite");
-                
+                else{
+                    System.out.println("Database kosong");
                 }
-                else if(result.getInt("Kuantitas_Pertamax")!=0)
-                {
-                    System.out.print("Pertamax");
-                
-                }
-                System.out.print("\nJumlah     : ");
-                if(result.getInt("Kuantitas_Premium")!=0)
-                {
-                    System.out.print(result.getInt("Kuantitas_Premium")+" Liter");
-                
-                }
-                else if(result.getInt("Kuantitas_Pertalite")!=0)
-                {
-                    System.out.print(result.getInt("Kuantitas_Pertalite")+" Liter");
-                
-                }
-                else if(result.getInt("Kuantitas_Pertamax")!=0)
-                {
-                    System.out.print(result.getInt("Kuantitas_Pertamax")+" Liter");
-                
-                }
-                System.out.print("\nHarga      : ");                    
-                System.out.print(result.getInt("Total_Harga"));
-                System.out.println("");
-                }
+            }
         }
         catch (SQLException e) {
-	        System.err.println("Terjadi kesalahan input data");
+	        System.err.println("Terjadi kesalahan dalam menampilkan data");
+            System.err.println(e.getMessage());
 	    }
     }
  
     public void editPenjualan(String iadm) throws SQLException{
+        //exception
         try {
             System.out.print("Masukkan nomor faktur yang akan diedit : ");
             no = i.nextInt();
@@ -213,29 +237,43 @@ public class Penjualan extends App implements Bbm{
     }
 
     public void hapusPenjualan(String iadm) throws SQLException{
+        //exception
         try{
+            url = "jdbc:mysql://localhost:3306/SPBU";
             con = DriverManager.getConnection(url,"root","");
-		    Clean.clearScreen();
-	        System.out.print("\nNo yang akan dihapus : ");
-	        no = i.nextInt();
-	        
-	        String sql = "DELETE FROM penjualan_bbm WHERE No = "+ no;
-	        Statement statement = con.createStatement();
-	        //ResultSet result = statement.executeQuery(sql);
-	        
-	        if(statement.executeUpdate(sql) > 0){
-	            System.out.println("Berhasil menghapus data pegawai dengan ID "+no);
-	        }
+            String sql;
+            System.out.println("1. Hapus nomor tertentu\n2. Hapus semua");
+            no = i.nextInt();
+            if(no==1)
+            {
+                System.out.print("\nNo yang akan dihapus : ");
+	            no = i.nextInt();
+                sql = "DELETE FROM penjualan_bbm WHERE No = "+ no;
+                Statement statement = con.createStatement();
+                if(statement.executeUpdate(sql) > 0){
+                    System.out.println("Berhasil menghapus data pegawai dengan ID "+no);
+                }
+            }
+            else if(no==2){
+                sql = "TRUNCATE TABLE penjualan_bbm";
+                Statement statement = con.createStatement();
+                if(statement.executeUpdate(sql) > 0){
+                    System.out.println("Berhasil menghapus data pegawai dengan ID "+no);
+                }
+            }
 	   }catch(SQLException e){
 	        System.out.println("Terjadi kesalahan dalam menghapus data barang");
+            System.err.println(e.getMessage());
 	        }        
     }
 
     public void cariPenjualan(String iadm) throws SQLException{
+        //exception
         try {
             System.out.print("Masukkan nomor faktur yang dicari: ");
             no = i.nextInt();
-            url = "jdbc:mysql://localhost:3306/SPBU";String sql = "SELECT * FROM penjualan_bbm WHERE No LIKE '%"+no+"%'";
+            url = "jdbc:mysql://localhost:3306/SPBU";
+            String sql = "SELECT * FROM penjualan_bbm WHERE No LIKE '%"+no+"%'";
             con = DriverManager.getConnection(url,"root","");
             Statement statement = con.createStatement();
             ResultSet result = statement.executeQuery(sql);
@@ -247,35 +285,35 @@ public class Penjualan extends App implements Bbm{
                 System.out.print("\nTanggal    : ");
                 System.out.print(result.getString("Tanggal"));
                 System.out.print("\nJenis      : ");
-                if(result.getInt("Kuantitas_Premium")!=0)
+                if(result.getDouble("Kuantitas_Premium")!=0)
                 {
                     System.out.print("Premium");
                 
                 }
-                else if(result.getInt("Kuantitas_Pertalite")!=0)
+                else if(result.getDouble("Kuantitas_Pertalite")!=0)
                 {
                     System.out.print("Pertalite");
                 
                 }
-                else if(result.getInt("Kuantitas_Pertamax")!=0)
+                else if(result.getDouble("Kuantitas_Pertamax")!=0)
                 {
                     System.out.print("Pertamax");
                 
                 }
                 System.out.print("\nJumlah     : ");
-                if(result.getInt("Kuantitas_Premium")!=0)
+                if(result.getDouble("Kuantitas_Premium")!=0)
                 {
-                    System.out.print(result.getInt("Kuantitas_Premium")+" Liter");
+                    System.out.print(result.getDouble("Kuantitas_Premium")+" Liter");
                 
                 }
-                else if(result.getInt("Kuantitas_Pertalite")!=0)
+                else if(result.getDouble("Kuantitas_Pertalite")!=0)
                 {
-                    System.out.print(result.getInt("Kuantitas_Pertalite")+" Liter");
+                    System.out.print(result.getDouble("Kuantitas_Pertalite")+" Liter");
                 
                 }
-                else if(result.getInt("Kuantitas_Pertamax")!=0)
+                else if(result.getDouble("Kuantitas_Pertamax")!=0)
                 {
-                    System.out.print(result.getInt("Kuantitas_Pertamax")+" Liter");
+                    System.out.print(result.getDouble("Kuantitas_Pertamax")+" Liter");
                 
                 }
                 System.out.print("\nHarga      : ");                    

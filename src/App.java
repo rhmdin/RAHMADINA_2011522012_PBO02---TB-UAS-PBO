@@ -36,6 +36,7 @@ public class App {
         String formattedDate = myDateObj.format(myFormatObj);
 
         do{
+            Clean.clearScreen();
             System.out.println("\n\n==================================");
             System.out.println("|              MENU               |");
             System.out.println("==================================");
@@ -48,8 +49,7 @@ public class App {
             int menu = Integer.parseInt(i.nextLine());
             
             if (menu==1){
-                
-            Clean.clearScreen();
+                Clean.clearScreen();
                 j.riwayatPenjualan(iadm);
             }
             else if(menu==2){
@@ -67,7 +67,6 @@ public class App {
             else if(menu==5){
                 Clean.clearScreen();
                 j.cariPenjualan(iadm);
-                
             }    
             else{
                 Clean.clearScreen();
