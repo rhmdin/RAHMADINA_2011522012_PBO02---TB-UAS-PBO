@@ -27,7 +27,6 @@ public class Penjualan extends App implements Bbm{
     
     @Override
     public int noFaktur(int iharga) throws SQLException {
-
         try {
             url = "jdbc:mysql://localhost:3306/SPBU";    
             con = DriverManager.getConnection(url,"root","");
@@ -47,7 +46,7 @@ public class Penjualan extends App implements Bbm{
             }
             
         } catch (Exception e) {
-            System.out.println("Coba cek lagi yaa din semangat!");
+            System.out.println("Penomoran faktur gagal");
             System.err.println(e.getMessage());
         }
         return no;
@@ -205,6 +204,7 @@ public class Penjualan extends App implements Bbm{
     public void editPenjualan(String iadm) throws SQLException{
         //exception
         try {
+            riwayatPenjualan(iadm);
             System.out.print("Masukkan nomor faktur yang akan diedit : ");
             no = i.nextInt();
             String sql = "SELECT * FROM penjualan_bbm WHERE NO = " +no;
@@ -236,7 +236,9 @@ public class Penjualan extends App implements Bbm{
             url = "jdbc:mysql://localhost:3306/SPBU";
             con = DriverManager.getConnection(url,"root","");
             String sql;
-            System.out.println("1. Hapus nomor tertentu\n2. Hapus semua");
+            System.out.println("---HAPUS DATA PENJUALAN---");
+            riwayatPenjualan(iadm);
+            System.out.println("\n1. Hapus nomor tertentu\n2. Hapus semua");
             System.out.print("Kategori Hapus: ");
             no = i.nextInt();
             if(no==1)
@@ -246,14 +248,14 @@ public class Penjualan extends App implements Bbm{
                 sql = "DELETE FROM penjualan_bbm WHERE No = "+ no;
                 Statement statement = con.createStatement();
                 if(statement.executeUpdate(sql) > 0){
-                    System.out.println("Berhasil menghapus data pegawai dengan ID "+no);
+                    System.out.println("Berhasil menghapus data penjualan dengan nomor "+no);
                 }
             }
             else if(no==2){
                 sql = "TRUNCATE TABLE penjualan_bbm";
                 Statement statement = con.createStatement();
                 if(statement.executeUpdate(sql) > 0){
-                    System.out.println("Berhasil menghapus data pegawai dengan ID "+no);
+                    System.out.println("Berhasil menghapus keseluruhan data!");
                 }
             }
 	   }catch(SQLException e){
@@ -265,9 +267,10 @@ public class Penjualan extends App implements Bbm{
     public void cariPenjualan(String iadm) throws SQLException{
         try {
             System.out.println("---CARI DATA PENJUALAN---");
-            System.out.println("1. Nomor faktur\n2.Nama admin");
+            riwayatPenjualan(iadm);
+            System.out.println("\n1. Nomor faktur\n2. Nama admin");
             System.out.print("Berdasarkan: ");
-            int ic = Integer.parseInt(i.nextLine());
+            int ic = i.nextInt();
             if(ic==1){
                 searchNo(iadm);
             }
@@ -286,6 +289,7 @@ public class Penjualan extends App implements Bbm{
 
     public void searchNo(String iadm) throws SQLException{
         try {
+            Clean.clearScreen();
             System.out.print("\nMasukkan nomor faktur yang dicari: ");
             no = i.nextInt();
             url = "jdbc:mysql://localhost:3306/SPBU";
@@ -346,6 +350,8 @@ public class Penjualan extends App implements Bbm{
 
     public void searchAdmin(String iadm) throws SQLException{
         try {
+            Clean.clearScreen();
+            i.nextLine();
             System.out.print("\nMasukkan nama admin yang dicari: ");
             String inm = i.nextLine();
             url = "jdbc:mysql://localhost:3306/SPBU";

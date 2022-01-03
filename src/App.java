@@ -43,11 +43,11 @@ public class App {
                     System.out.println("\n\n==================================");
                     System.out.println("|              MENU               |");
                     System.out.println("==================================");
-                    System.out.println("1. Lihat Data");
-                    System.out.println("2. Tambah Data");
-                    System.out.println("3. Edit Data");
-                    System.out.println("4. Hapus Data");
-                    System.out.println("5. Cari Data");
+                    System.out.println("1. Lihat Riwayat Data Penjualan");
+                    System.out.println("2. Tambah Data Penjualan");
+                    System.out.println("3. Edit Data Penjualan");
+                    System.out.println("4. Hapus Data Penjualan");
+                    System.out.println("5. Cari Data Penjualan");
                     System.out.print("no : ");
                     int menu = Integer.parseInt(i.nextLine());
                     if (menu==1){
@@ -78,13 +78,10 @@ public class App {
                     String y = i.nextLine();
                     lanjut = y.equalsIgnoreCase("y");
                     }while(lanjut);
-                    Clean.clearScreen();
-                    System.out.println("\nTerima kasih telah menggunakan program ini! \nRahmadina, Padang, "+formattedDate);
-            }
+                }
             else{
                 System.out.println("Akun tidak tersedia. Program hanya dapat diakses oleh admin yang terdaftar");         
             }
-        Clean.clearScreen();
         System.out.println("\nTerima kasih telah menggunakan program ini! \nRahmadina, Padang, "+formattedDate);
         i.close();
     }
