@@ -16,8 +16,9 @@ public class App {
 
     public static void main(String[] args){
     String url = "jdbc:mysql://localhost:3306/spbu";
+    //exception
     try {
-        //hashmap
+        //collection framework hashmap
         HashMap<String, String> admin = new HashMap<String, String>();
         admin.put("dina", "dina012");
         admin.put("aya", "aya152");
@@ -26,7 +27,7 @@ public class App {
         Class.forName("com.mysql.cj.jdbc.Driver");
 		con = DriverManager.getConnection(url,"root","");
         Scanner i = new Scanner(System.in);
-        LocalDateTime myDateObj = LocalDateTime.now();
+        LocalDateTime myDateObj = LocalDateTime.now();//method date now
         //201522012RAHMADINA
         DateTimeFormatter myFormatObj = DateTimeFormatter.ofPattern("dd-MM-yyyy HH:mm:ss");
         String formattedDate = myDateObj.format(myFormatObj);
@@ -36,8 +37,11 @@ public class App {
         String iadm;
 		System.out.println("Driver Ready");
         System.out.print("Admin     : ");
+        //method string lowercase
         iadm = i.nextLine().toLowerCase();
+        //decision atau percabangan
         if(admin.get(iadm)!=null){
+            //looping atau perulangan
                 do{
                     Clean.clearScreen();
                     System.out.println("\n\n==================================");
@@ -55,21 +59,21 @@ public class App {
                         j.riwayatPenjualan(iadm);
                     }
                     else if(menu==2){
-                        Clean.clearScreen();
+                       Clean.clearScreen();
                         j.tambahPenjualan(iadm);
                     }
                     else if(menu==3){
                         Clean.clearScreen();
-                        j.editPenjualan(iadm);
+                       j.editPenjualan(iadm);
                     }
                     else if(menu==4){
                         Clean.clearScreen();
                         j.hapusPenjualan(iadm);
-                    }
+                     }
                     else if(menu==5){
                         Clean.clearScreen();
                         j.cariPenjualan(iadm);
-                    }    
+                     }    
                     else{
                         Clean.clearScreen();
                         System.out.println("Menu tidak tersedia");
@@ -77,8 +81,9 @@ public class App {
                     System.out.print("\n\nKembali? (y/n) : ");
                     String y = i.nextLine();
                     lanjut = y.equalsIgnoreCase("y");
-                    }while(lanjut);
-                }
+                }while(lanjut); 
+            }
+                     
             else{
                 System.out.println("Akun tidak tersedia. Program hanya dapat diakses oleh admin yang terdaftar");         
             }

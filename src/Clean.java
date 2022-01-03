@@ -1,3 +1,4 @@
+//class clean
 public class Clean {
     //constructor clean
     public Clean(){

@@ -3,7 +3,7 @@ import java.sql.*;
 import java.time.LocalDateTime;
 import java.time.format.DateTimeFormatter; 
 
-//inheritance
+//class penjualan, inherit class App, implement interface bbm
 public class Penjualan extends App implements Bbm{
 
     static Connection con;
@@ -69,6 +69,7 @@ public class Penjualan extends App implements Bbm{
         return tgl;
     }
 
+    //Proses ulang Matematika
     //premium = 6500/L
     public float jualPremium(int iharga){
         beli = ((float) iharga/6500);
@@ -134,7 +135,7 @@ public class Penjualan extends App implements Bbm{
             System.err.println(e.getMessage());
 	    }
     }
-
+    //select or view data
     public void riwayatPenjualan(String iadm) throws SQLException{
         //exception
         try{
@@ -201,6 +202,7 @@ public class Penjualan extends App implements Bbm{
 	    }
     }
  
+    //edit or update data
     public void editPenjualan(String iadm) throws SQLException{
         //exception
         try {
@@ -216,7 +218,7 @@ public class Penjualan extends App implements Bbm{
                 System.out.println("\n\nNama sebelumnya : "+result.getString("ADMIN"));
                 System.out.print("Nama terbaru : ");
                 String inm = i.next();
-                sql = "UPDATE penjualan_bbm SET ADMIN='"+inm+"' WHERE NO='"+no+"'";
+                sql = "UPDATE penjualan_bbm SET ADMIN='"+inm.toUpperCase()+"' WHERE NO='"+no+"'";
                 if(statement.executeUpdate(sql) > 0){
                     System.out.println("Berhasil memperbaharui nama admin pada faktur nomor "+no+" menjadi "+inm);
                 }
@@ -230,6 +232,7 @@ public class Penjualan extends App implements Bbm{
         }
     }
 
+    //delete data
     public void hapusPenjualan(String iadm) throws SQLException{
         //exception
         try{
@@ -264,6 +267,7 @@ public class Penjualan extends App implements Bbm{
 	        }        
     }
 
+    //seacrh data
     public void cariPenjualan(String iadm) throws SQLException{
         try {
             System.out.println("---CARI DATA PENJUALAN---");
